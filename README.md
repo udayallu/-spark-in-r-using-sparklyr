@@ -385,4 +385,118 @@ duration_by_artist %>%
 ```
 
 ## Exer 15
+A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+- Group the contents of track_metadata by artist_name.
+- Add a new column named time_since_first_release.
+- Make this equal to the groupwise year minus the first year (that is, the min() year) that the artist released a track.
+- Arrange the rows in descending order of time_since_first_release.
+```
+# track_metadata_tbl has been pre-defined
+track_metadata_tbl
+
+track_metadata_tbl %>%
+  # Group by artist
+  group_by(artist_name,year) %>%
+  # Calc time since first release
+  mutate(time_since_first_release=year-min(year)) %>%
+  # Arrange by descending time since first release
+  arrange(desc(time_since_first_release))
+```
+## Exer 16
+
+### Adv SQL
+As previously mentioned, when you use the dplyr interface, sparklyr converts your code into SQL before passing it to Spark. Most of the time, this is what you want. However, you can also write raw SQL to accomplish the same task. Most of the time, this is a silly idea since the code is harder to write and harder to debug. However, if you want your code to be portable – that is, used outside of R as well – then it may be useful. For example, a fairly common workflow is to use sparklyr to experiment with data processing, then switch to raw SQL in a production environment. By writing raw SQL to begin with, you can just copy and paste your queries when you move to production.
+
+SQL queries are written as strings, and passed to dbGetQuery() from the DBI package. The pattern is as follows.
+
+query <- "SELECT col1, col2 FROM some_data WHERE some_condition"
+a_data.frame <- dbGetQuery(spark_conn, query)
+Note that unlike the dplyr code you've written, dbGetQuery() will always execute the query and return the results to R immediately. If you want to delay returning the data, you can use dbSendQuery() to execute the query, then dbFetch() to return the results. That's more advanced usage, not covered here. Also note that DBI functions return data.frames rather than tibbles, since DBI is a lower-level package.
+
+A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+Complete the query to select all columns from the track_metadata Spark data frame where the year is less than 1935 and the duration is greater than 300 seconds.
+Call dbGetQuery() to execute the query, assigning the results to results, then view the output.
+```
+# Write SQL query
+query <- "SELECT * FROM track_metadata WHERE year<1935 AND duration>300"
+
+# Run the query
+(results <- dbGetQuery(spark_conn, query))
+```
+## Exer 16
+## Left joins
+As well as manipulating single data frames, sparklyr allows you to join two data frames together. A full treatment of how to join tables together using dplyr syntax is given in the Joining Data in R with dplyr course. For the rest of this chapter, you'll see some examples of how to do this using Spark.
+
+- A left join takes all the values from the first table, and looks for matches in the second table. If it finds a match, it adds the data from the second table; if not, it adds missing values. The principle is shown in this diagram.
+
+###Exer
+
+A Spark connection has been created for you as spark_conn. Tibbles attached to the track metadata and artist terms stored in Spark have been pre-defined as track_metadata_tbl and artist_terms_tbl respectively.
+
+- Use a left join to join the artist terms to the track metadata by the artist_id column.
+- The table to be joined to, track_metadata_tbl, comes first.
+- The table that joins the first, artist_terms_tbl, comes next.
+- Assign the result to joined.
+- Use dim() to determine how many rows and columns there are in the joined table.
+```
+# track_metadata_tbl and artist_terms_tbl have been pre-defined
+track_metadata_tbl
+artist_terms_tbl
+
+# Left join artist terms to track metadata by artist_id
+joined <- left_join(track_metadata_tbl, artist_terms_tbl, by = "artist_id")
+
+# How many rows and columns are in the joined table?
+dim(joined)
+```
+
+## Exer 17
+## Anti joins
+- In the previous exercise, the joined dataset wasn't as big as you might have expected, since not all the artists had tags associated with them. Anti joins are really useful for finding problems with other joins.
+
+- An anti join returns the rows of the first table where it cannot find a match in the second table. The principle is shown in this diagram.
+- Anti joins are a type of filtering join, since they return the contents of the first table, but with their rows filtered depending upon the match conditions.
+- The syntax for an anti join is more or less the same as for a left join: simply swap left_join() for anti_join().
+```
+anti_join(a_tibble, another_tibble, by = c("id_col1", "id_col2"))
+```
+
+### EXER 
+A Spark connection has been created for you as spark_conn. Tibbles attached to the track metadata and artist terms stored in Spark have been pre-defined as track_metadata_tbl and artist_terms_tbl respectively.
+
+- Use an anti join to join the artist terms to the track metadata by the artist_id column. Assign the result to joined.
+- Use dim() to determine how many rows and columns there are in the joined table.
+```
+
+```
+### Semi joins
+Semi joins are the opposite of anti joins: an anti-anti join, if you like.
+
+- A semi join returns the rows of the first table where it can find a match in the second table. The principle is shown in this diagram.
+- The syntax is the same as for other join types; simply swap the other join function for semi_join()
+```
+semi_join(a_tibble, another_tibble, by = c("id_col1", "id_col2"))
+```
+You may have spotted that the results of a semi join plus the results of an anti join give the orignial table. So, regardless of the table contents or how you join them, semi_join(A, B) plus anti_join(A, B) will return A (though maybe with the rows in a different order).
+
+### Exeer
+
+A Spark connection has been created for you as spark_conn. Tibbles attached to the track metadata and artist terms stored in Spark have been pre-defined as track_metadata_tbl and artist_terms_tbl respectively.
+
+- Use a semi join to join the artist terms to the track metadata by the artist_id column. Assign the result to joined.
+- Use dim() to determine how many rows and columns there are in the joined table.
+```
+# track_metadata_tbl and artist_terms_tbl have been pre-defined
+track_metadata_tbl
+artist_terms_tbl
+
+# Semi join artist terms to track metadata by artist_id
+joined <- semi_join(track_metadata_tbl,artist_terms_tbl,by="artist_id")
+
+# How many rows and columns are in the joined table?
+dim(joined)
+```
+
 
