@@ -1,4 +1,4 @@
-# spark in r sing-sparklyr
+# Spark in r using **sparklyr**
 1. R is a wonderful tool for the data analysis. 
 2. Spark is a cluster computing platform.
 3. Sparklyr is an r package that gives access to the spark from R 
