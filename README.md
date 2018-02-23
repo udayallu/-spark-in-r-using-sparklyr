@@ -156,6 +156,60 @@ track_metadata_tbl %>%
   select(artist_name, release, title,year) %>%
   filter(year >= 1960, year < 1970)
 ```
+## Exercise 6
 
+A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
 
+1. Select the artist_name, release, title, and year fields.
+2. Pipe the result of this to filter on tracks from the 1960s.
+3. Pipe the result of this to arrange() to order by artist_name, then descending year, then title.
 
+```
+# track_metadata_tbl has been pre-defined
+track_metadata_tbl
+
+# Manipulate the track metadata
+track_metadata_tbl %>%
+  # Select columns
+  select(artist_name, release, title,year) %>%
+   filter(year >= 1960, year < 1970) %>%
+  arrange(artist_name,desc(year),title)
+```
+## Exerise 6
+A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+ - Select the title, and duration fields. Note that the durations are in seconds.
+- Pipe the result of this to mutate() to create a new field, duration_minutes, that contains the track duration in minutes.
+
+```
+# track_metadata_tbl has been pre-defined
+track_metadata_tbl
+
+# Manipulate the track metadata
+track_metadata_tbl %>%
+  select(title,duration) %>%
+  # Mutate columns
+  mutate(duration_minutes=duration/60)
+
+```
+
+## Exer 7
+A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+- Select the title, and duration fields.
+- Pipe the result of this to create a new field, duration_minutes, that contains the track duration in minutes.
+- Pipe the result of this to summarize() to calculate the mean duration in minutes, in a field named mean_duration_minutes.
+
+```
+# track_metadata_tbl has been pre-defined
+track_metadata_tbl
+
+# Manipulate the track metadata
+track_metadata_tbl %>%
+  select(title,duration) %>%
+  # Mutate columns
+   mutate(duration_minutes=duration/60) %>%
+  # Summarize columns
+  summarize(mean_duration_minutes = mean(duration_minutes))
+```
+## Exp 8
