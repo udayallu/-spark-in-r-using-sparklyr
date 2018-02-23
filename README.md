@@ -1,4 +1,4 @@
-# spark-in-r-using-sparklyr
+# spark in r sing-sparklyr
 1. R is a wonderful tool for the data analysis. 
 2. Spark is a cluster computing platform.
 3. Sparklyr is an r package that gives access to the spark from R 
@@ -44,7 +44,7 @@ Deeplayer provide the grammer of the data transformation. The 5 main data transf
 - spark_version() and spark_disconnect() both take the Spark connection as their only argument.
 
 - One word of warning. Connecting to a cluster takes several seconds, so it is impractical to regularly connect and disconnect. While you need to reconnect for each DataCamp exercise, when you incorporate sparklyr into your own workflow, it is usually best to keep the connection open for the whole time that you want to work with Spark.
-## Instricutions
+## pre requs..
 - Load the sparklyr package with library().
 - Connect to Spark by calling spark_connect(), with argument master = "local". Assign the result to spark_conn.
 - Get the Spark version using spark_version(), with argument sc = spark_conn.
@@ -61,7 +61,7 @@ spark_version(spark_conn)
 # Disconnect from Spark
 spark_disconnect(spark_conn)
 ```
-## Exercise 2
+## Exer 2
 Copying data into Spark
 Before you can do any real work using Spark, you need to get your data into it. sparklyr has some functions such as spark_read_csv() that will read a CSV file into Spark. More generally, it is useful to be able to copy data from R to Spark. This is done with dplyr's copy_to() function. Be warned: copying data is a fundamentally slow process. In fact, a lot of strategy regarding optimizing performance when working with big datasets is to find ways of avoiding copying the data from one location to another.
 
@@ -86,7 +86,7 @@ track_metadata_tbl <- copy_to(spark_conn, track_metadata)
 src_tbls(spark_conn)
 
 ```
-## Exercise 3
+## Exer3
 A Spark connection has been created for you as spark_conn. The track metadata for 1,000 tracks is stored in the Spark cluster in the table "track_metadata".
 
 1. Link to the "track_metadata" table using tbl(). Assign the result to track_metadata_tbl.
@@ -102,7 +102,7 @@ dim(track_metadata_tbl)
 # See how small the tibble is
 object_size(track_metadata_tbl)
 ```
-## Exercise 3
+## Exer 3
 A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
 
 1. Print the first 5 rows and all the columns of the track metadata.
@@ -119,7 +119,7 @@ str(track_metadata_tbl)
 # Examine structure of data
 glimpse(track_metadata_tbl)
 ```
-## Exercise 4
+## Exer 4
 
 -A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
 
@@ -141,7 +141,7 @@ tryCatch({
   error = print
 )
 ```
-## Exercise 5
+## Exer5
 - A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
 
 - As in the previous exercise, select the artist_name, release, title, and year using select().
@@ -156,7 +156,7 @@ track_metadata_tbl %>%
   select(artist_name, release, title,year) %>%
   filter(year >= 1960, year < 1970)
 ```
-## Exercise 6
+## Exer 6
 
 A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
 
@@ -175,7 +175,7 @@ track_metadata_tbl %>%
    filter(year >= 1960, year < 1970) %>%
   arrange(artist_name,desc(year),title)
 ```
-## Exerise 6
+## Exer 6
 A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
 
  - Select the title, and duration fields. Note that the durations are in seconds.
