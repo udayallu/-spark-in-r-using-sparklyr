@@ -28,6 +28,14 @@ If you wish to install Spark on your local system, simply install the **sparklyr
 2. Do some work.
 3. Close the connection to Spark using **spark_disconnect()**.
 
+## dplyr verbs
+Deeplayer provide the grammer of the data transformation. The 5 main data transformation we can apply are 
+1. Select the columns using **select() **
+2. Filter the rows using **filter() **
+3. Arrange the rows using **arrange() **
+4. Change and add columns using the mutate using ** mutate()**
+5. calculate the summary statistics using the using **summarize() **
+
 
 ## In this exercise, you'll do this simplest possible piece of work: returning the version of Spark that is running, using spark_version().
 
@@ -53,13 +61,101 @@ spark_version(spark_conn)
 # Disconnect from Spark
 spark_disconnect(spark_conn)
 ```
+## Exercise 2
+Copying data into Spark
+Before you can do any real work using Spark, you need to get your data into it. sparklyr has some functions such as spark_read_csv() that will read a CSV file into Spark. More generally, it is useful to be able to copy data from R to Spark. This is done with dplyr's copy_to() function. Be warned: copying data is a fundamentally slow process. In fact, a lot of strategy regarding optimizing performance when working with big datasets is to find ways of avoiding copying the data from one location to another.
 
-## dplyr verbs
-Deeplayer provide the grammer of the data transformation. The 5 main data transformation we can apply are 
-1. Select the columns using **select() **
-2. Filter the rows using **filter() **
-3. Arrange the rows using **arrange() **
-4. Change and add columns using the mutate using ** mutate()**
-5. calculate the summary statistics using the using **summarize() **
+copy_to() takes two arguments: a Spark connection (dest), and a data frame (df) to copy over to Spark.
+
+Once you have copied your data into Spark, you might want some reassurance that it has actually worked. You can see a list of all the data frames stored in Spark using src_tbls(), which simply takes a Spark connection argument (x).
+
+```
+# Load dplyr
+library("dplyr")
+
+# Explore track_metadata structure
+str(track_metadata)
+
+# Connect to your Spark cluster
+spark_conn <- spark_connect(master="local")
+
+# Copy track_metadata to Spark
+track_metadata_tbl <- copy_to(spark_conn, track_metadata)
+
+# List the data frames available in Spark
+src_tbls(spark_conn)
+
+```
+## Exercise 3
+A Spark connection has been created for you as spark_conn. The track metadata for 1,000 tracks is stored in the Spark cluster in the table "track_metadata".
+
+1. Link to the "track_metadata" table using tbl(). Assign the result to track_metadata_tbl.
+2. See how big the dataset is, using dim() on track_metadata_tbl.
+3. See how small the tibble is, using object_size() on track_metadata_tbl.
+```
+# Link to the track_metadata table in Spark
+track_metadata_tbl <- tbl(spark_conn,"track_metadata")
+
+# See how big the dataset is
+dim(track_metadata_tbl)
+
+# See how small the tibble is
+object_size(track_metadata_tbl)
+```
+## Exercise 3
+A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+1. Print the first 5 rows and all the columns of the track metadata.
+2. Examine the structure of the tibble using str().
+3. Examine the structure of the track metadata using glimpse().
+
+```
+# Print 5 rows, all columns
+print(track_metadata_tbl, n = 5, width = Inf)
+
+# Examine structure of tibble
+str(track_metadata_tbl)
+
+# Examine structure of data
+glimpse(track_metadata_tbl)
+```
+## Exercise 4
+
+-A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+-Select the artist_name, release, title, and year using select().
+Try to do the same thing using square bracket indexing. Spoiler! This code throws an error, so it is wrapped in a call to tryCatch().
+
+```
+# track_metadata_tbl has been pre-defined
+track_metadata_tbl
+
+# Manipulate the track metadata
+track_metadata_tbl %>%
+  select(artist_name, release, title,year)
+
+# Try to select columns using [ ]
+tryCatch({
+    track_metadata_tbl[, c("artist_name", "release", "title", "year")]
+  },
+  error = print
+)
+```
+## Exercise 5
+- A Spark connection has been created for you as spark_conn. A tibble attached to the track metadata stored in Spark has been pre-defined as track_metadata_tbl.
+
+- As in the previous exercise, select the artist_name, release, title, and year using select().
+Pipe the result of this to filter() to get the tracks from the 1960s.
+
+```
+# track_metadata_tbl has been pre-defined
+glimpse(track_metadata_tbl)
+
+# Manipulate the track metadata
+track_metadata_tbl %>%
+  select(artist_name, release, title,year) %>%
+  filter(year==1960)
+```
+
 
 
