@@ -154,7 +154,7 @@ glimpse(track_metadata_tbl)
 # Manipulate the track metadata
 track_metadata_tbl %>%
   select(artist_name, release, title,year) %>%
-  filter(year==1960)
+  filter(year >= 1960, year < 1970)
 ```
 
 
